@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Meeting Data</title>
+    <link rel="stylesheet" th:href="@{/style.css}">
+</head>
+<body>
+    <h2>Meeting Information</h2>
+    <div th:unless="${meeting == null}">
+        <dt class="meetingHeadline">
+            <span th:text="${meeting.name}">Name</span> by
+            <span th:text="${meeting.owner.name}">Owner</span>
+            (From: <span th:text="${meeting.startDate}">START</span> To: <span th:text="${meeting.endDate}">END</span>)
+        </dt>
+        <dd class="meetingDescription">
+            <span th:if="${meeting.description}" th:text="${meeting.description}">Description</span>
+            <span th:if="${meeting.description eq null}">No description available</span>
+            <div th:unless="${#lists.isEmpty(meeting.people)}">
+                <dl th:each="person : ${meeting.people}">
+                    <dt class="personline">
+                        <form th:action="@{${meeting.id} + '/remove'}" th:object="${person}" th:method="delete">
+                            <input type="hidden" name="name" th:value="${person.name}" />
+                            <span th:text="${person.name}">Person</span><button type="submit" class="btn">Delete</button>
+                        </form>
+                    </dt>
+                </dl>
+            </div>
+            <div th:if="${#lists.isEmpty(meeting.people)}">
+                <p>You have no people in your meeting</p>
+            </div>
+        </dd>
+        <hr/>
+        <h3>Join People to the meeting</h3>
+        <form th:action="@{${meeting.id} + '/add'}" th:object="${person}" th:method="patch">
+            <label for="name">Name:</label>
+            <input type="text" name="name" size="50"><br/>
+            <input type="submit">
+        </form>
+    </div>
+    <div th:if="${meeting == null}">
+        <p>There is no meeting created</p>
+    </div>
+</body>
+</html>

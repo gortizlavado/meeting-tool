@@ -4,6 +4,7 @@ import es.gortizlavado.meetingtool.model.Meeting;
 import es.gortizlavado.meetingtool.model.Person;
 import es.gortizlavado.meetingtool.provider.JsonMapper;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -19,6 +20,7 @@ import java.util.stream.Stream;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class MeetingService {
 
 
@@ -62,8 +64,7 @@ public class MeetingService {
 
     public Meeting removePerson(UUID meetingId, Person request) {
         Meeting meeting = fetchMeetingDataByFile(meetingId);
-        if (!meeting.isOwner(request)) {
-            meeting.removePerson(request);
+        if (meeting.removePerson(request)) {
             saveDataToFileName(meeting, StandardOpenOption.TRUNCATE_EXISTING);
             memberService.deleteMember(meetingId, Set.of(request));
         }
@@ -71,7 +72,19 @@ public class MeetingService {
         return meeting;
     }
 
+    public Meeting getMeeting(UUID meetingId) {
+        Meeting meeting;
+        try {
+            meeting = fetchMeetingDataByFile(meetingId);
+        } catch (Exception e) {
+            meeting = new Meeting();
+        }
+
+        return meeting;
+    }
+
     public List<Meeting> getMeetings() {
+        log.info("get meetings request");
         List<Meeting> meetings = new ArrayList<>();
         try(Stream<Path> files = Files.list(Path.of(BASE_PATH)).filter(Predicate.not(Files::isDirectory))) {
             files.forEach(nameFile -> {
@@ -82,6 +95,7 @@ public class MeetingService {
             throw new RuntimeException(e);
         }
 
+        log.info("result - size: {}", meetings.size());
         return meetings;
     }
 

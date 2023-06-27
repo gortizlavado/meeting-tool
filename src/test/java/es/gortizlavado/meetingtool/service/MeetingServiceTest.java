@@ -11,7 +11,7 @@ import org.junit.jupiter.api.Test;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 import java.util.function.Predicate;
@@ -28,7 +28,7 @@ class MeetingServiceTest {
     @BeforeEach
     void setUp() {
         owner = new Person("thomas");
-        meeting = new Meeting("name", owner, "description", LocalDate.of(2023, 1, 1), LocalDate.of(2023, 1, 2));
+        meeting = new Meeting("name", owner, "description", LocalDateTime.of(2023, 1, 1, 9, 30), LocalDateTime.of(2023, 1, 2, 11, 0));
     }
 
     @AfterAll

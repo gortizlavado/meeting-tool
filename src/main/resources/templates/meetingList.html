@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Meeting List</title>
+</head>
+<body>
+    <h2>Your meetings</h2>
+    <div th:unless="${#lists.isEmpty(meetingList)}">
+        <dl th:each="meeting : ${meetingList}">
+            <dt class="meetingHeadline">
+                <a th:href="@{'meeting/' + ${meeting.id}}"><span th:text="${meeting.name}">Name</span></a> by
+                <span th:text="${meeting.owner.name}">Owner</span>
+                (From: <span th:text="${meeting.startDate}">START</span> To: <span th:text="${meeting.endDate}">END</span>)
+            </dt>
+            <dd class="meetingDescription">
+                <span th:if="${meeting.description}" th:text="${meeting.description}">Description</span>
+                <span th:if="${meeting.description eq null}">No description available</span>
+            </dd>
+        </dl>
+    </div>
+    <div th:if="${#lists.isEmpty(meetingList)}">
+        <p>You have no meetings in your list</p>
+    </div>
+    <hr/>
+    <h3>Create new meeting</h3>
+    <form method="POST">
+        <label for="name">Name:</label>
+        <label>
+            <input type="text" name="name" size="50">
+        </label><br/>
+        <label for="owner">Owner:</label>
+        <label>
+            <input type="text" name="owner" size="25">
+        </label><br/>
+        <label for="description">Description:</label>
+        <label>
+            <textarea name="description" cols="80" rows="5"></textarea>
+        </label><br/>
+        <label for="startDate">Start Date:</label><br/>
+        <label>
+            <input type="datetime-local" name="startDate"
+                   value="2023-06-21T00:00"
+                   min="2023-06-21T00:00" max="2023-12-31T09:00">
+        </label>
+        <label for="endDate">End Date:</label><br/>
+        <label>
+            <input type="datetime-local" name="endDate"
+                   value="2023-06-21T17:00"
+                   min="2023-06-21T09:00" max="2023-12-31T17:00">
+        </label>
+        <input type="submit">
+    </form>
+</body>
+</html>
